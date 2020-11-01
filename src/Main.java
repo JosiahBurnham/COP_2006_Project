@@ -25,6 +25,8 @@ public class Main {
         COURSES.add("GLY 1010C");
 
         GradeBook gradeBook = new GradeBook(COURSES,ASSIGNMENTSANDWEIGHTS);
+        IOHelper ioHelper = new IOHelper();
+        System.out.println(ioHelper.inputCourses(COURSES));
 
 
 

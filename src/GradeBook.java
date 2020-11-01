@@ -3,12 +3,15 @@ import java.util.List;
 
 public class GradeBook {
 
+    public List<String> courses;
+    public HashMap <String, Integer> assignmentsAndWeights;
+    public HashMap<String,String> gradeBook = new HashMap<>();
+    public String name;
+
     // The Hashmap that contains all the courses
     // and all the weights for each of those assignments
     public HashMap<String,HashMap<String,Integer>>  coursesAndWeightedAssignments =
             new HashMap<>();
-    private List<String> courses;
-    private HashMap <String, Integer> assignmentsAndWeights;
 
     public GradeBook(List<String> courses, HashMap<String, Integer> assignmentsAndWeights){
 
