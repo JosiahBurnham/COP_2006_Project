@@ -13,16 +13,13 @@ public class GradeBook {
      */
 
     public List<String> courses;
-    public HashMap <String, Integer> assignmentsAndWeights;
-    public HashMap<String,Double> gradeBook = new HashMap<>();
+    public HashMap<String, Integer> assignmentsAndWeights;
+    public HashMap<String, Double> gradeBook = new HashMap<>();
     public String name;
 
 
-
-    public GradeBook(List<String> courses, HashMap<String, Integer> assignmentsAndWeights){
+    public GradeBook(List<String> courses, HashMap<String, Integer> assignmentsAndWeights) {
         /**
-         *
-         *
          * @param courses All the courses the student could have taken
          * @param assignmentsAndWeights The possible assignments for each course and their weights
          */
@@ -31,10 +28,11 @@ public class GradeBook {
 
     }
 
-    public void buildGradebook(){
+    public void buildGradeBook() {
         List<String> coursesTaken = inputCoursesTaken(courses);
+        HashMap<String, HashMap<String, Double>> gradesToCalculate = InputGrades(coursesTaken);
+        calculateGrade(gradesToCalculate);
 
-        InputGrades(coursesTaken);
     }
 
     private HashMap<String, HashMap<String, Double>> InputGrades(List<String> coursesTaken) {
@@ -76,8 +74,8 @@ public class GradeBook {
                     // the try is to catch any input that is not a double
                     try {
                         // converting the String input to an double
-                         double input = Double.parseDouble(scanner.nextLine());
-                         // the exit condition for this loop is an input of -1
+                        double input = Double.parseDouble(scanner.nextLine());
+                        // the exit condition for this loop is an input of -1
                         if (input != -1) {
                             inputFlag = false;
                             // making sure input is a grade between 100% and 0%
@@ -86,13 +84,13 @@ public class GradeBook {
                                 average = sum / (double) ctr;
                                 System.out.printf("Average: %.2f\n\n", average);
                                 ctr++;
-                              // input what not a normal grade percentage
+                                // input what not a normal grade percentage
                             } else if (input > 100.0 || input < 0.0) {
                                 System.out.println("That is not valid input, please enter an unweighted grade.");
                             }
                         } else {
                             // assigning the average grade to each type of assignment
-                            assignmentAndAverage.put(assignment,average);
+                            assignmentAndAverage.put(assignment, average);
                         }
                     } catch (NumberFormatException e) {
                         System.out.println("Please only input a Number between 100 and 0!\n\n");
@@ -105,7 +103,7 @@ public class GradeBook {
         return averageCourseAssignmentGrades;
     }
 
-    public List<String> inputCoursesTaken (List<String> courses){
+    private List<String> inputCoursesTaken(List<String> courses) {
         /**
          * The student decides what courses that they have taken
          *
@@ -120,23 +118,23 @@ public class GradeBook {
         System.out.println("What Classes are you taking?");
         System.out.println("The Courses we offer are:");
         //to display all the available courses to the student
-        for(String course:courses){
-            System.out.print(course+", ");
+        for (String course : courses) {
+            System.out.print(course + ", ");
         }
         System.out.println("When you are done entering classes please input QUIT");
         boolean inputFlag = false;
         // the only way to set the inputFlag = true is if the user enters QUIT
-        while(!inputFlag){
+        while (!inputFlag) {
             String input = scan.nextLine();
             // checks for exit condition
-            if(input.toUpperCase().equals("QUIT")){
+            if (input.toUpperCase().equals("QUIT")) {
                 inputFlag = true;
-            }else{
+            } else {
                 // checks to see if the user input is in the List of courses
-                if(courses.contains(input.toUpperCase())){
+                if (courses.contains(input.toUpperCase())) {
                     coursesTaken.add(input.toUpperCase());
                     inputFlag = false;
-                }else{
+                } else {
                     // if input not in courses tell them it was not valid
                     System.out.println("That input was not valid");
                     inputFlag = false;
@@ -146,8 +144,27 @@ public class GradeBook {
         return coursesTaken;
     }
 
-    private HashMap<String, Double> calculateGrade(HashMap<String, HashMap<String, Double>> coursesToCalculate){
-     return null;
+    private void  calculateGrade(HashMap<String, HashMap<String, Double>> coursesToCalculate) {
+        /**
+         * Calculates the wighted grade out of a 700 point scale
+         * and then adds the courses final grade to the gradeBook Hashmap
+         *
+         * @param coursesToCalculate the courses that the student has taken along with their
+         *                           average score for each assignment type
+         */
+        for (String key : coursesToCalculate.keySet()) {
+            // weightedSum = the sum of all the avaerage grades multiplied by their individual weight
+            double weightedSum = 0.0;
+            for (String assignment : assignmentsAndWeights.keySet()) {
+                // calculating the weighted grade of each assignment type
+                double grade = ((coursesToCalculate.get(key).get(assignment) / 100)
+                        * assignmentsAndWeights.get(assignment));
+                weightedSum += grade;
+            }
+            // calculating the final weighted grade
+            double finalGrade = ((weightedSum / 700) * 100);
+            gradeBook.put(key,finalGrade);
+        }
     }
 
 

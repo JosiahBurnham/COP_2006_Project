@@ -26,7 +26,7 @@ public class Main {
 
         GradeBook gradeBook = new GradeBook(COURSES,ASSIGNMENTSANDWEIGHTS);
 
-        gradeBook.buildGradebook();
+        gradeBook.buildGradeBook();
 
 
 
