@@ -9,8 +9,8 @@ public class Main {
         // The types of assignments and the weights for each type of assignment
         // Out of a 700 point scale
         final HashMap<String, Integer> ASSIGNMENTSANDWEIGHTS = new HashMap<>();
-        ASSIGNMENTSANDWEIGHTS.put("Quizzes",225);
-        ASSIGNMENTSANDWEIGHTS.put("Exams",100);
+        ASSIGNMENTSANDWEIGHTS.put("Quiz",225);
+        ASSIGNMENTSANDWEIGHTS.put("Exam",100);
         ASSIGNMENTSANDWEIGHTS.put("Homework",250);
         ASSIGNMENTSANDWEIGHTS.put("Project",125);
 
@@ -26,7 +26,7 @@ public class Main {
 
         GradeBook gradeBook = new GradeBook(COURSES,ASSIGNMENTSANDWEIGHTS);
         IOHelper ioHelper = new IOHelper();
-        System.out.println(gradeBook.toString());
+        gradeBook.buildGradebook();
 
 
 
