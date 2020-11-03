@@ -5,11 +5,11 @@ import java.util.List;
 
 /**
  * TODO
- *  prettify decimal value for grade out put to csv
- *  make letter grade method
- *  ask student for name
  *  read from file based on name
- *
+ *  add error message so if their is no name on record
+ *  add documentation to all of the csv methods
+ *  add a number on the amount of classes you can take
+ *  print out the final decimal and letter grades for each class all fancy like
  */
 
 public class Main {
@@ -34,9 +34,9 @@ public class Main {
         COURSES.add("ENC 1102");
         COURSES.add("GLY 1010C");
 
-        GradeBook gradeBook = new GradeBook(COURSES,ASSIGNMENTSANDWEIGHTS,"Josiah Burnham");
+        GradeBook gradeBook = new GradeBook(COURSES,ASSIGNMENTSANDWEIGHTS);
 
-        gradeBook.buildGradeBook();
+        gradeBook.readGradeBookCSV();
 
 
 

@@ -1,7 +1,4 @@
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,16 +18,37 @@ public class GradeBook {
     public HashMap<String, Double> gradeBook = new HashMap<>();
     public String name;
 
-
-    public GradeBook(List<String> courses, HashMap<String, Integer> assignmentsAndWeights, String name) {
+    public GradeBook(List<String> courses, HashMap<String, Integer> assignmentsAndWeights) {
         /**
+         * Sets starting values for the class
+         * and asks for name of user
+         *
          * @param courses All the courses the student could have taken
          * @param assignmentsAndWeights The possible assignments for each course and their weights
-         * @param name The Full Name of The Student, or at least the one they want to search by
          */
         this.courses = courses;
         this.assignmentsAndWeights = assignmentsAndWeights;
-        this.name = name;
+        askName();
+    }
+
+    public void readGradeBookCSV() throws FileNotFoundException {
+        List<List<String>> studentGrades = new ArrayList<>();
+        FileReader reader = new FileReader("src/GradeBook.csv");
+
+        try (BufferedReader resultReader = new BufferedReader(reader)) {
+            String line;
+
+            while ((line = resultReader.readLine()) != null){
+                List<String> currentLine = new ArrayList<>();
+                for(String field: line.split(",")) {
+                    currentLine.add(field);
+                }
+                studentGrades.add(currentLine);
+            }
+        }catch (IOException ex){
+            System.out.println("File Error: "+ex.getStackTrace());
+        }
+        searchCSV(studentGrades);
     }
 
     public void buildGradeBook() throws IOException {
@@ -38,7 +56,6 @@ public class GradeBook {
         HashMap<String, HashMap<String, Double>> gradesToCalculate = InputGrades(coursesTaken);
         calculateGrade(gradesToCalculate);
         writeGradeBookCSV();
-
     }
 
     private HashMap<String, HashMap<String, Double>> InputGrades(List<String> coursesTaken) {
@@ -88,7 +105,7 @@ public class GradeBook {
                             if (input <= 100.0 && input >= 0.0) {
                                 sum += input;
                                 average = sum / (double) ctr;
-                                System.out.printf("Average: %.2f\n\n", average);
+                                System.out.printf("Average: %.2f\n", average);
                                 ctr++;
                                 // input what not a normal grade percentage
                             } else if (input > 100.0 || input < 0.0) {
@@ -98,7 +115,7 @@ public class GradeBook {
                             // assigning the average grade to each type of assignment
                             assignmentAndAverage.put(assignment, average);
                         }
-                    } catch (NumberFormatException e) {
+                    } catch (NumberFormatException  e) {
                         System.out.println("Please only input a Number between 100 and 0!\n\n");
                     }
                 }
@@ -158,24 +175,32 @@ public class GradeBook {
          * @param coursesToCalculate the courses that the student has taken along with their
          *                           average score for each assignment type
          */
+
         for (String key : coursesToCalculate.keySet()) {
-            // weightedSum = the sum of all the avaerage grades multiplied by their individual weight
-            double weightedSum = 0.0;
-            for (String assignment : assignmentsAndWeights.keySet()) {
-                // calculating the weighted grade of each assignment type
-                double grade = ((coursesToCalculate.get(key).get(assignment) / 100)
-                        * assignmentsAndWeights.get(assignment));
-                weightedSum += grade;
+           // if the user accidentally presses enter to many times it will throw a NullPointerException
+            try {
+                // weightedSum = the sum of all the avaerage grades multiplied by their individual weight
+                double weightedSum = 0.0;
+                for (String assignment : assignmentsAndWeights.keySet()) {
+                    // calculating the weighted grade of each assignment type
+                    double grade = ((coursesToCalculate.get(key).get(assignment) / 100)
+                            * assignmentsAndWeights.get(assignment));
+                    weightedSum += grade;
+                }
+                // calculating the final weighted grade
+                double finalGrade = ((weightedSum / 700) * 100);
+                gradeBook.put(key, finalGrade);
+            }catch (NullPointerException e){
+                gradeBook.put(key, 0.0);
             }
-            // calculating the final weighted grade
-            double finalGrade = ((weightedSum / 700) * 100);
-            gradeBook.put(key,finalGrade);
         }
 
     }
 
     protected void writeGradeBookCSV() throws IOException {
-        // HANDLE NULL POINTER EXCEPTION
+        /**
+         * Read Data from gradeBook and write its to a csv
+         */
 
         File csvFile = new File("src/GradeBook.csv");
         if (!csvFile.exists()) {
@@ -186,7 +211,8 @@ public class GradeBook {
             BufferedWriter writer = new BufferedWriter(new FileWriter(csvFile, true));
             writer.write(name);
             for(String course:gradeBook.keySet()) {
-                writer.write("," + course + "," + gradeBook.get(course) + "," + "TBCL");
+                String decimalGrade = String.format("%.2f", gradeBook.get(course));
+                writer.write("," + course + "," + decimalGrade + "," + determineLetterGrade(gradeBook.get(course)));
             }
             writer.write("\n");
             writer.close();
@@ -195,5 +221,50 @@ public class GradeBook {
         }
     }
 
+    private List<String> searchCSV(List<List<String>> csvInfo){
+        int ctr = 0;
+        for(List<String> list : csvInfo){
+            if (list.contains(name)){
+                return csvInfo.get(list.indexOf(name)+ctr);
+
+            }
+            ctr++;
+        }
+        return List.of("We do not have you on our records.");
+    }
+
+
+    private char determineLetterGrade(double grade){
+        /**
+         * This program Determines what Letter Grade A student got in their course
+         *
+         * @param grade the decimal grade that was calculated
+         * @return letterGrade the letter grade that the student got
+         */
+        char letterGrade = 'F';
+
+        if(grade >= 90){
+            letterGrade = 'A';
+        }else if( grade >= 80){
+            letterGrade = 'B';
+        }else if( grade >= 70){
+            letterGrade = 'C';
+        }else if( grade >= 60){
+            letterGrade = 'D';
+        }
+        return letterGrade;
+    }
+
+    private void askName(){
+        /**
+         * asks the user their name and formats it
+         * to be stored to be able to more easily
+         * find that name later
+         */
+        Scanner scan = new Scanner(System.in);
+        System.out.println("What is your name?");
+        String input = scan.nextLine();
+        name = input.toUpperCase().replaceAll(" ","").strip();
+    }
 
 }
