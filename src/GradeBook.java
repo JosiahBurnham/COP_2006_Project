@@ -1,3 +1,7 @@
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,20 +22,22 @@ public class GradeBook {
     public String name;
 
 
-    public GradeBook(List<String> courses, HashMap<String, Integer> assignmentsAndWeights) {
+    public GradeBook(List<String> courses, HashMap<String, Integer> assignmentsAndWeights, String name) {
         /**
          * @param courses All the courses the student could have taken
          * @param assignmentsAndWeights The possible assignments for each course and their weights
+         * @param name The Full Name of The Student, or at least the one they want to search by
          */
         this.courses = courses;
         this.assignmentsAndWeights = assignmentsAndWeights;
-
+        this.name = name;
     }
 
-    public void buildGradeBook() {
+    public void buildGradeBook() throws IOException {
         List<String> coursesTaken = inputCoursesTaken(courses);
         HashMap<String, HashMap<String, Double>> gradesToCalculate = InputGrades(coursesTaken);
         calculateGrade(gradesToCalculate);
+        writeGradeBookCSV();
 
     }
 
@@ -164,6 +170,28 @@ public class GradeBook {
             // calculating the final weighted grade
             double finalGrade = ((weightedSum / 700) * 100);
             gradeBook.put(key,finalGrade);
+        }
+
+    }
+
+    protected void writeGradeBookCSV() throws IOException {
+        // HANDLE NULL POINTER EXCEPTION
+
+        File csvFile = new File("src/GradeBook.csv");
+        if (!csvFile.exists()) {
+            csvFile.createNewFile();
+        }
+
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(csvFile, true));
+            writer.write(name);
+            for(String course:gradeBook.keySet()) {
+                writer.write("," + course + "," + gradeBook.get(course) + "," + "TBCL");
+            }
+            writer.write("\n");
+            writer.close();
+        } catch (IOException e) {
+            System.out.println("Cannot Write to the File: Permission Issue:" + e.getStackTrace());
         }
     }
 

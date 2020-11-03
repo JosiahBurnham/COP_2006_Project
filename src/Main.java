@@ -1,10 +1,20 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * TODO
+ *  prettify decimal value for grade out put to csv
+ *  make letter grade method
+ *  ask student for name
+ *  read from file based on name
+ *
+ */
+
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         // The types of assignments and the weights for each type of assignment
         // Out of a 700 point scale
@@ -24,7 +34,7 @@ public class Main {
         COURSES.add("ENC 1102");
         COURSES.add("GLY 1010C");
 
-        GradeBook gradeBook = new GradeBook(COURSES,ASSIGNMENTSANDWEIGHTS);
+        GradeBook gradeBook = new GradeBook(COURSES,ASSIGNMENTSANDWEIGHTS,"Josiah Burnham");
 
         gradeBook.buildGradeBook();
 
