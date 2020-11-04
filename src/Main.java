@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * TODO
- *  print out the final decimal and letter grades for each class all fancy like
+ *  Make a decscion in constructor for GradeBook
  */
 
 public class Main {
@@ -31,12 +31,7 @@ public class Main {
         COURSES.add("GLY 1010C");
 
         GradeBook gradeBook = new GradeBook(COURSES,ASSIGNMENTSANDWEIGHTS);
-        List<String> rawGrade = gradeBook.readGradeBookCSV();
-        String grade = String.format("%s achieved a %s %s in %s",
-                rawGrade.get(0),
-                rawGrade.get(2),
-                rawGrade.get(3),
-                rawGrade.get(1));
-        System.out.println(grade);
+        gradeBook.makeDecision();
+
     }
 }

@@ -5,6 +5,13 @@ import java.util.List;
 import java.util.Scanner;
 
 public class GradeBook {
+    /**
+     * GradeBook is responsible for calculating a weighted grade on a 700 point scale
+     * , given the classes and the weights assigned to each type of assignment.
+     * It Also is responsible for either reading to a CSV file for grades, or
+     * it searches that CSV for a recorded grade under that name.
+     */
+
     /*
      * courses = a list of courses that can be taken by a student
      * assignmentsAndWeights = a Hashmap of assignments with
@@ -13,14 +20,14 @@ public class GradeBook {
      * name = name of the student
      */
 
-    public List<String> courses;
-    public HashMap<String, Integer> assignmentsAndWeights;
-    public HashMap<String, Double> gradeBook = new HashMap<>();
-    public String name;
+    private List<String> courses;
+    private HashMap<String, Integer> assignmentsAndWeights;
+    private HashMap<String, Double> gradeBook = new HashMap<>();
+    private String name;
+
 
     public GradeBook(List<String> courses, HashMap<String, Integer> assignmentsAndWeights) {
-        /**
-         * Sets starting values for the class
+        /**Sets starting values for the class
          * and asks for name of user
          *
          * @param courses All the courses the student could have taken
@@ -28,34 +35,57 @@ public class GradeBook {
          */
         this.courses = courses;
         this.assignmentsAndWeights = assignmentsAndWeights;
+        // no matter what the User does this program always needs to askName()
         askName();
     }
+    public void makeDecision() throws IOException {
+        /**
+         * This is responsible for handling the decision that the
+         * User has to make (Whether to Read or Write to the CSV File)
+         */
+        Scanner scanner = new Scanner(System.in);
 
-    public List<String> readGradeBookCSV() throws FileNotFoundException {
+        System.out.println("If you want to input grades type INPUT, if you want to read grades type READ");
+        String input = scanner.nextLine();
+        if(input.toUpperCase().equals("INPUT")){
+            buildGradeBook();
+        }else if (input.toUpperCase().equals("READ")){
+            readGradeBookCSV();
+        }else{
+            System.out.println("That is not valid Input.");
+        }
+    }
+
+    private void readGradeBookCSV() {
         /**
          * This function is responsible for searching through the
          * csv file for a person's name and grades
          */
+
         List<List<String>> studentGrades = new ArrayList<>();
-        FileReader reader = new FileReader("src/GradeBook.csv");
+        try {
+            FileReader reader = new FileReader("src/GradeBook.csv");
 
-        try (BufferedReader resultReader = new BufferedReader(reader)) {
-            String line;
-
-            while ((line = resultReader.readLine()) != null){
-                List<String> currentLine = new ArrayList<>();
-                for(String field: line.split(",")) {
-                    currentLine.add(field);
+            try (BufferedReader resultReader = new BufferedReader(reader)) {
+                String line;
+                // read through the CSV file and split each field to put it to a List to Search and later Print
+                while ((line = resultReader.readLine()) != null) {
+                    List<String> currentLine = new ArrayList<>();
+                    for (String field : line.split(",")) {
+                        currentLine.add(field);
+                    }
+                    studentGrades.add(currentLine);
                 }
-                studentGrades.add(currentLine);
+            } catch (IOException ex) {
+                System.out.println("File Error: " + ex.getStackTrace());
             }
-        }catch (IOException ex){
-            System.out.println("File Error: "+ex.getStackTrace());
+            printGrades(searchCSV(studentGrades));
+        }catch (FileNotFoundException e){
+            System.out.println("You have to input the grades of at least one person in order to read grades");
         }
-        return searchCSV(studentGrades);
     }
 
-    public void buildGradeBook() throws IOException {
+    private void buildGradeBook() throws IOException {
         /**
          * Builds the GradeBook CSV
          * Really just a switchboard for most of the class
@@ -156,20 +186,25 @@ public class GradeBook {
         boolean inputFlag = false;
         // the only way to set the inputFlag = true is if the user enters QUIT
         while (!inputFlag) {
-            String input = scan.nextLine();
-            // checks for exit condition
-            if (input.toUpperCase().equals("QUIT")) {
-                inputFlag = true;
-            } else {
-                // checks to see if the user input is in the List of courses
-                if (courses.contains(input.toUpperCase())) {
-                    coursesTaken.add(input.toUpperCase());
-                    inputFlag = false;
+            if(coursesTaken.size()<=courses.size()) {
+                String input = scan.nextLine();
+                // checks for exit condition
+                if (input.toUpperCase().equals("QUIT")) {
+                    inputFlag = true;
                 } else {
-                    // if input not in courses tell them it was not valid
-                    System.out.println("That input was not valid");
-                    inputFlag = false;
+                    // checks to see if the user input is in the List of courses
+                    if (courses.contains(input.toUpperCase())) {
+                        coursesTaken.add(input.toUpperCase());
+                        inputFlag = false;
+                    } else {
+                        // if input not in courses tell them it was not valid
+                        System.out.println("That input was not valid");
+                        inputFlag = false;
+                    }
                 }
+            }else{
+                System.out.println("you have reached the max number of classes you can have\n");
+                inputFlag = true;
             }
         }
         return coursesTaken;
@@ -207,7 +242,10 @@ public class GradeBook {
 
     private void writeGradeBookCSV() throws IOException {
         /**
-         * Read Data from gradeBook and write its to a csv
+         * Reads User Data from the HashMap gradeBook
+         * and then writes it to a csv in a specific order
+         *
+         * @throws IOException this is just a basic file handling step
          */
 
         File csvFile = new File("src/GradeBook.csv");
@@ -230,15 +268,30 @@ public class GradeBook {
     }
 
     private List<String> searchCSV(List<List<String>> csvInfo){
-        int ctr = 0;
+        /**
+         * Search the CSV for a specific name and return a List
+         * for response
+         *
+         * @param csvInfo is a the List of Lists that contains all
+         *                of the Users in the CSV file that contains grades
+         * @return coursesAndGrades A String List that Contains either the Students Grades
+         *          with out the name of the student, or a error message that they do not have
+         *          a recorded grade
+         */
+        List<String> coursesAndGrades = new ArrayList<>();
         for(List<String> list : csvInfo){
             if (list.contains(name)){
-
-                return csvInfo.get(list.indexOf(name)+ctr);
-
+                for (String index: list){
+                    // The Name of the Student should not be in the String List that gets returned
+                    if(!index.equals(name)){
+                        coursesAndGrades.add(index);
+                    }
+                }
+                // if they found a record return that
+                return coursesAndGrades;
             }
-            ctr++;
         }
+        // if they did not find a record return error message
         return List.of("We do not have you on our records.");
     }
 
@@ -267,13 +320,34 @@ public class GradeBook {
     private void askName(){
         /**
          * asks the user their name and formats it
-         * to be stored to be able to more easily
-         * find that name later
+         * to be stored in the CSV to be able to more easily
+         * find that name later, and set it to the name field
          */
         Scanner scan = new Scanner(System.in);
         System.out.println("What is your name?");
         String input = scan.nextLine();
         name = input.toUpperCase().replaceAll(" ","").strip();
     }
+   private void printGrades(List<String> grades){
+       /**
+        * This prints the grades that were found in the CSV
+        * under the User's name
+        *
+        * @param grades the List of grades per course for a specific student
+        */
+       if(grades.size() > 1){
+            System.out.println("You Achieved a: ");
+            // you have to increment by three because of the way a csv is graded
+            for(int i=0;i< (grades.size());i+=3){
+                    String output = String.format("%s %s in %s,", grades.get(i+1), grades.get(i+2),
+                            grades.get(i));
+                    System.out.print(output);
+            }
+        }else{
+           // print error message for no file found
+           String noFileFound = String.format("%s", grades).replace("[","").replace("]","");
+           System.out.println(noFileFound);
+       }
+   }
 
 }
