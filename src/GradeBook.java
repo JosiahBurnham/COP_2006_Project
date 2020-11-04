@@ -31,7 +31,11 @@ public class GradeBook {
         askName();
     }
 
-    public void readGradeBookCSV() throws FileNotFoundException {
+    public List<String> readGradeBookCSV() throws FileNotFoundException {
+        /**
+         * This function is responsible for searching through the
+         * csv file for a person's name and grades
+         */
         List<List<String>> studentGrades = new ArrayList<>();
         FileReader reader = new FileReader("src/GradeBook.csv");
 
@@ -48,10 +52,14 @@ public class GradeBook {
         }catch (IOException ex){
             System.out.println("File Error: "+ex.getStackTrace());
         }
-        searchCSV(studentGrades);
+        return searchCSV(studentGrades);
     }
 
     public void buildGradeBook() throws IOException {
+        /**
+         * Builds the GradeBook CSV
+         * Really just a switchboard for most of the class
+         */
         List<String> coursesTaken = inputCoursesTaken(courses);
         HashMap<String, HashMap<String, Double>> gradesToCalculate = InputGrades(coursesTaken);
         calculateGrade(gradesToCalculate);
@@ -197,7 +205,7 @@ public class GradeBook {
 
     }
 
-    protected void writeGradeBookCSV() throws IOException {
+    private void writeGradeBookCSV() throws IOException {
         /**
          * Read Data from gradeBook and write its to a csv
          */
@@ -225,6 +233,7 @@ public class GradeBook {
         int ctr = 0;
         for(List<String> list : csvInfo){
             if (list.contains(name)){
+
                 return csvInfo.get(list.indexOf(name)+ctr);
 
             }

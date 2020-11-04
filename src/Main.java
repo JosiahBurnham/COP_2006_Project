@@ -5,10 +5,6 @@ import java.util.List;
 
 /**
  * TODO
- *  read from file based on name
- *  add error message so if their is no name on record
- *  add documentation to all of the csv methods
- *  add a number on the amount of classes you can take
  *  print out the final decimal and letter grades for each class all fancy like
  */
 
@@ -35,11 +31,12 @@ public class Main {
         COURSES.add("GLY 1010C");
 
         GradeBook gradeBook = new GradeBook(COURSES,ASSIGNMENTSANDWEIGHTS);
-
-        gradeBook.readGradeBookCSV();
-
-
-
-
+        List<String> rawGrade = gradeBook.readGradeBookCSV();
+        String grade = String.format("%s achieved a %s %s in %s",
+                rawGrade.get(0),
+                rawGrade.get(2),
+                rawGrade.get(3),
+                rawGrade.get(1));
+        System.out.println(grade);
     }
 }
