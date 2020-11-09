@@ -3,12 +3,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * TODO
- *  Make a decscion in constructor for GradeBook
- */
 
 public class Main {
+    /**
+     * This class is responsible for passing values
+     * into GradeBook, and starting the decision process
+     * for the user on weather they want to read data, or input it
+     */
 
     public static void main(String[] args) throws IOException {
 
@@ -31,6 +32,7 @@ public class Main {
         COURSES.add("GLY 1010C");
 
         GradeBook gradeBook = new GradeBook(COURSES,ASSIGNMENTSANDWEIGHTS);
+        // this is the method in GradeBook that starts the whole process
         gradeBook.makeDecision();
 
     }
