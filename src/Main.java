@@ -9,6 +9,7 @@ public class Main {
      * This class is responsible for passing values
      * into GradeBook, and starting the decision process
      * for the user on weather they want to read data, or input it
+     *
      */
 
     public static void main(String[] args) throws IOException {

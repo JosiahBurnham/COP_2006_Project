@@ -10,6 +10,9 @@ public class GradeBook {
      * , given the classes and the weights assigned to each type of assignment.
      * It Also is responsible for either reading to a CSV file for grades, or
      * it searches that CSV for a recorded grade under that name.
+     *
+     * TODO: Add the bonus feature (See how many points need for next letter grade)
+     * TODO: ALL DUE BY TOMORROW @jjburnham0705@eagle.fgcu.edu
      */
 
     /*
@@ -35,6 +38,11 @@ public class GradeBook {
          */
         this.courses = courses;
         this.assignmentsAndWeights = assignmentsAndWeights;
+        // makes a splash screen
+        System.out.println("Welcome to The FGCU Grade book! \n");
+        System.out.print("Here you can choose to either get grades you have already inputted.");
+        System.out.println(" or, calculate new courses all together.");
+        System.out.println("Just follow the prompts below and you will be all set to use this program.\n\n");
         // no matter what the User does this program always needs to askName()
         askName();
     }
