@@ -11,8 +11,6 @@ public class GradeBook {
      * It Also is responsible for either reading to a CSV file for grades, or
      * it searches that CSV for a recorded grade under that name.
      *
-     * TODO: Add the bonus feature (See how many points need for next letter grade)
-     * TODO: ALL DUE BY TOMORROW @jjburnham0705@eagle.fgcu.edu
      */
 
     /*
@@ -55,7 +53,7 @@ public class GradeBook {
          */
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("If you want to input grades type INPUT, if you want to read grades type READ");
+        System.out.print("If you want to input grades type INPUT, if you want to read grades type READ: ");
         String input = scanner.nextLine();
         if(input.toUpperCase().equals("INPUT")){
             buildGradeBook();
@@ -138,7 +136,7 @@ public class GradeBook {
                 // to get user input for each grade
                 while (!inputFlag) {
                     inputFlag = true;
-                    System.out.println("When you are done entering grades for a category" +
+                    System.out.println("\nWhen you are done entering grades for a category" +
                             " please input -1");
                     System.out.printf("for %s what did you get for %s %d\n", course, assignment, ctr);
                     Scanner scanner = new Scanner(System.in);
@@ -186,7 +184,7 @@ public class GradeBook {
         List<String> coursesTaken = new ArrayList<>();
 
         Scanner scan = new Scanner(System.in);
-        System.out.println("What Classes are you taking?");
+        System.out.println("\nWhat Classes are you taking?");
         System.out.println("The Courses we offer are:");
         //to display all the available courses to the student
         for (String course : courses) {
@@ -196,6 +194,7 @@ public class GradeBook {
         boolean inputFlag = false;
         // the only way to set the inputFlag = true is if the user enters QUIT
         while (!inputFlag) {
+            System.out.print("Please input an offered class: ");
             if(coursesTaken.size()<=courses.size()) {
                 String input = scan.nextLine();
                 // checks for exit condition
@@ -306,23 +305,25 @@ public class GradeBook {
     }
 
 
-    private char determineLetterGrade(double grade){
+    private String determineLetterGrade(double grade){
         /**
-         * This program Determines what Letter Grade A student got in their course
+         * Determines what Letter Grade A student got in their course,
+         * and and how many point are needed to reach letter grade.
+         * Unless they have an "A", then just prints out congrats.
          *
          * @param grade the decimal grade that was calculated
          * @return letterGrade the letter grade that the student got
          */
-        char letterGrade = 'F';
+        String letterGrade = String.format("F, You need %.2f more points to get to a D", grade-60.0);
 
         if(grade >= 90){
-            letterGrade = 'A';
+            letterGrade = "A: Congratulations!";
         }else if( grade >= 80){
-            letterGrade = 'B';
+            letterGrade = String.format("B: You need %.2f more points to get to a A", 90.0-grade);
         }else if( grade >= 70){
-            letterGrade = 'C';
+            letterGrade = String.format("C: You need %.2f more points to get to a B", 80.0-grade);
         }else if( grade >= 60){
-            letterGrade = 'D';
+            letterGrade = String.format("D: You need %.2f more points to get to a C", 70.0-grade);
         }
         return letterGrade;
     }
@@ -334,7 +335,7 @@ public class GradeBook {
          * find that name later, and set it to the name field
          */
         Scanner scan = new Scanner(System.in);
-        System.out.println("What is your name?");
+        System.out.print("What is your name?: ");
         String input = scan.nextLine();
         name = input.toUpperCase().replaceAll(" ","").strip();
     }
@@ -346,12 +347,12 @@ public class GradeBook {
         * @param grades the List of grades per course for a specific student
         */
        if(grades.size() > 1){
-            System.out.println("You Achieved a: ");
+            System.out.println("\nYou Achieved: ");
             // you have to increment by three because of the way a csv is graded
             for(int i=0;i< (grades.size());i+=3){
-                    String output = String.format("%s %s in %s,", grades.get(i+1), grades.get(i+2),
-                            grades.get(i));
-                    System.out.print(output);
+                    String output = String.format("in %s a %s %s,", grades.get(i), grades.get(i+1),
+                            grades.get(i+2));
+                    System.out.println(output);
             }
         }else{
            // print error message for no file found
