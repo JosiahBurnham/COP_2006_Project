@@ -31,18 +31,20 @@ public class GradeBook {
 
     public GradeBook(List<String> courses, HashMap<String, Integer> assignmentsAndWeights) {
         /**Sets starting values for the class
-         * and asks for name of user
+         * prints a splash screen, and asks for name of user.
          *
          * @param courses All the courses the student could have taken
          * @param assignmentsAndWeights The possible assignments for each course and their weights
          */
         this.courses = courses;
         this.assignmentsAndWeights = assignmentsAndWeights;
+
         // makes a splash screen
         System.out.println("Welcome to The FGCU Grade book! \n");
         System.out.print("Here you can choose to either get grades you have already inputted.");
         System.out.println(" or, calculate new courses all together.");
         System.out.println("Just follow the prompts below and you will be all set to use this program.\n\n");
+
         // no matter what the User does this program always needs to askName()
         askName();
     }
